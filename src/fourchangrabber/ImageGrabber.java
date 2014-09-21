@@ -17,7 +17,7 @@ import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
 import javax.xml.bind.DatatypeConverter;
 
-public class Grabber extends Thread {
+public class ImageGrabber extends Thread {
 	private String directory;
 	private String baseImageUrl;
 	private String board;
@@ -172,7 +172,7 @@ public class Grabber extends Thread {
 		}
 	}
 	
-	public Grabber(String board, int threadNum) {
+	public ImageGrabber(String board, int threadNum) {
 		this.board = board;
 		this.threadNum = threadNum;
 		directory = (new File(baseDirectory, board + "_" + threadNum)).getAbsolutePath();
@@ -196,7 +196,6 @@ public class Grabber extends Thread {
 	}
 	
 	public static void main(String[] args) throws InterruptedException {
-		System.out.println("4chan thread grabber v0.1 alpha");
 		if(args.length < 2) {
 			System.out.println("usage: fourchangrabber board threadnumber");
 			return;
@@ -222,7 +221,7 @@ public class Grabber extends Thread {
 		}
 		baseDirectory = grabberDirectory.getAbsolutePath();
 		
-		Grabber grabber = new Grabber(board, threadNum);
+		ImageGrabber grabber = new ImageGrabber(board, threadNum);
 		while(true) {
 			grabber.run();
 		}
