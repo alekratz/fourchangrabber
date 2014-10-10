@@ -27,7 +27,12 @@ public class ImageGrabber extends Thread {
 	private static HashSet<String> boards = null;
 	private static String baseDirectory = null ;
 	
-	private void updateBoardList() {
+	/**
+	 * Updates the list of boards. This only really needs to be called once, unless
+	 * 4chan manages to add/remove a board while this is running. Not likely, but
+	 * still probable.
+	 */
+	private static void updateBoardList() {
 		boards = new HashSet<>();
 		try{
 			URL url = new URL("http://a.4cdn.org/boards.json");
@@ -52,7 +57,7 @@ public class ImageGrabber extends Thread {
 	}
 	
 	/**
-	 * Gets all of the images that need to be downloaded.
+	 * Gets a list of all of the images that need to be downloaded for this thread.
 	 */
 	private void getThreadInfo() {
 		String boardUrl = "http://a.4cdn.org/" + board + "/thread/" + threadNum + ".json";
@@ -62,6 +67,9 @@ public class ImageGrabber extends Thread {
 			InputStream is = url.openStream();
 			JsonParser parser = Json.createParser(is);
 			String ext = "", tim = "", md5 = "";
+			if(!parser.hasNext()) {
+				return; // TODO : set 404 status
+			}
 			while(parser.hasNext()) {
 				Event ev = parser.next();
 				if(ev == Event.KEY_NAME) {
@@ -165,13 +173,18 @@ public class ImageGrabber extends Thread {
 			}
 			
 			try {
-				Thread.sleep(getSleepTime());
+				ImageGrabber.sleep(getSleepTime()); // we made the type, might as well use it
 			} catch(InterruptedException ex) {
 				break;
 			}
 		}
 	}
 	
+	/**
+	 * Instantiates a new ImageGrabber.
+	 * @param board the 4chan board to grab images from
+	 * @param threadNum the thread corresponding to the to download images from
+	 */
 	public ImageGrabber(String board, int threadNum) {
 		this.board = board;
 		this.threadNum = threadNum;
