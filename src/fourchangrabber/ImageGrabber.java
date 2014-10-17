@@ -9,13 +9,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.HashMap;
 
 import javax.json.Json;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
-import javax.xml.bind.DatatypeConverter;
 
 public class ImageGrabber extends Thread {
 	private String directory;
@@ -125,7 +125,8 @@ public class ImageGrabber extends Thread {
 		try {
 			digest = MessageDigest.getInstance("md5").digest(response);
 		} catch (NoSuchAlgorithmException e) { }
-		String digestStr = DatatypeConverter.printBase64Binary(digest);
+		
+		String digestStr = Base64.getEncoder().encodeToString(digest);
 		// the digests are not equal! oh no checksum failed
 		if(!digestStr.equals(md5)) {
 			throw new MismatchedHashException(digestStr, md5);
