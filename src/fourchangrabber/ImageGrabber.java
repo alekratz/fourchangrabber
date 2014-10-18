@@ -208,36 +208,4 @@ public class ImageGrabber extends Thread {
 	public void setSleepTime(int sleepTime) {
 		this.sleepTime = sleepTime;
 	}
-	
-	public static void main(String[] args) throws InterruptedException {
-		if(args.length < 2) {
-			System.out.println("usage: fourchangrabber board threadnumber");
-			return;
-		}
-		
-		// input validation
-		String board = args[0];
-		int threadNum;
-		try {
-			threadNum = Integer.parseInt(args[1]);
-		} catch(NumberFormatException ex) {
-			ex.printStackTrace();
-			return;
-		}
-		
-		// make thread grabber directory
-		File grabberDirectory = new File(System.getProperty("user.home"), "threadgrabber");
-		if(!grabberDirectory.exists()) {
-			grabberDirectory.mkdir();
-		} else if(!grabberDirectory.isDirectory()) {
-			System.out.println("Grabber directory is not writeable");
-			return;
-		}
-		baseDirectory = grabberDirectory.getAbsolutePath();
-		
-		ImageGrabber grabber = new ImageGrabber(board, threadNum);
-		while(true) {
-			grabber.run();
-		}
-	}
 }
